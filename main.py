@@ -1,5 +1,20 @@
 import copy
 
+class MomentMatrixElement:
+    def __init__(self, group):
+        if isinstance(group[0], identity):
+            self.value = 1
+        else:
+            self.value = group
+    
+    def __repr__(self):
+        if self.value == 1:
+            return '1'
+        return f'<{self.value}>'
+    
+    def is_one(self):
+        return self.value == 1
+
 class symbol:
     def __init__(self, who, output):
         """
@@ -125,6 +140,9 @@ class group:
             return group(identity())
         return rst
 
+    def trace_with_density_op(self):
+        return MomentMatrixElement(self)
+
 class MomentMatrix:
     def __init__(self, N, M, d):
         """
@@ -152,10 +170,19 @@ class MomentMatrix:
         for i in range(len(row_labels)):
             self.matrix[i + 1] = row_labels[i]
 
-        # Remplir la matrice
+        # Remplir la matrice et les contraintes
+        constraints = {}
         for y in range(1, self.mat_height):
             for x in range(y, self.mat_width):
-                self.matrix[y * self.mat_width + x] = self.matrix[y * self.mat_width].reduce_with(self.matrix[x])
+                elt = self.matrix[y * self.mat_width].reduce_with(self.matrix[x]).trace_with_density_op()
+                if not elt.is_one():
+                    s = elt.__repr__()
+                    if s in constraints:
+                        constraints[s].append((x, y))
+                    else:
+                        constraints[s] = [(x, y)]
+                self.matrix[y * self.mat_width + x] = elt
+        self.constraints = constraints
 
     def __repr__(self):
         s = ''
@@ -171,6 +198,9 @@ class MomentMatrix:
                 s += elt.__repr__().ljust(lengts[x]) + '  '
             s += '\n'
         return s
+
+    def get_constraints(self):
+        return self.constraints
 
 
 def generate_combinations(N, M, d):
@@ -214,3 +244,4 @@ def generate_combinations(N, M, d):
 N, M, d = 2, 2, 2
 moment_matrix = MomentMatrix(N, M, d)
 print(moment_matrix)
+print(moment_matrix.get_constraints())
