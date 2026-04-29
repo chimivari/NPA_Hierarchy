@@ -120,8 +120,8 @@ class group:
                 break
             j1 -= 1
             j2 += 1
-        rst.symbols += self[self.first_b_index:j1 + 1] + other[j2:len(self)]
-        if len(rst) == 0:
+        rst.symbols += self[self.first_b_index:j1 + 1] + other[j2:len(other)]
+        if len(rst.symbols) == 0:
             return group(identity())
         return rst
 
