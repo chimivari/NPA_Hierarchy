@@ -125,6 +125,54 @@ class group:
             return group(identity())
         return rst
 
+class MomentMatrix:
+    def __init__(self, N, M, d):
+        """
+        :param N: Nombre d'input pour Alice
+        :param M: Nombre d'input pour Bob
+        :param d: Degré du NPA (> 0)
+        """
+        assert(d > 0)
+
+        # Construire les labels pour les lignes et les colonnes
+        col_labels = [group(identity())] 
+        for i in range(1, d + 1):
+            col_labels += generate_combinations(N, M, i)
+        row_labels = copy.deepcopy(col_labels)
+        row_labels = [l.dagger() for l in row_labels]
+
+        self.mat_width = len(col_labels) + 1
+        self.mat_height = len(row_labels) + 1
+
+        # Commencer à remplir la matrice avec les labels
+        self.matrix = [None for _ in range((len(row_labels) + 1) * (len(col_labels) + 1))]
+        self.matrix[0] = ''
+        for i in range(len(col_labels)):
+            self.matrix[(i + 1) * self.mat_width] = col_labels[i]
+        for i in range(len(row_labels)):
+            self.matrix[i + 1] = row_labels[i]
+
+        # Remplir la matrice
+        for y in range(1, self.mat_height):
+            for x in range(y, self.mat_width):
+                self.matrix[y * self.mat_width + x] = self.matrix[y * self.mat_width].reduce_with(self.matrix[x])
+
+    def __repr__(self):
+        s = ''
+        lengts = []
+        for x in range(self.mat_width):
+            max_len = 0
+            for y in range(self.mat_height):
+                max_len = max(max_len, len(self.matrix[y * self.mat_width + x].__repr__()))
+            lengts.append(max_len)
+        for y in range(self.mat_height):
+            for x in range(self.mat_width):
+                elt = self.matrix[y * self.mat_width + x]
+                s += elt.__repr__().ljust(lengts[x]) + '  '
+            s += '\n'
+        return s
+
+
 def generate_combinations(N, M, d):
     # Création des listes de labels
     labels_A = [f"A{i}" for i in range(N)]
@@ -162,21 +210,7 @@ def generate_combinations(N, M, d):
     return [group(s) for s in results]
 
 
-def make_moment_matrix(N, M, d):
-    """
-    :param N: Nombre d'input pour Alice
-    :param M: Nombre d'input pour Bob
-    :param d: Degré du NPA (défaut = 1)
-    :return: La moment matrix et ses contraints
-    """
-    col_labels = [group(identity())] 
-    for i in range(1, d + 1):
-        col_labels += generate_combinations(N, M, i)
-    row_labels = copy.deepcopy(col_labels)
-    row_labels = [l.dagger() for l in row_labels]
-
-    return col_labels, row_labels
     
 N, M, d = 2, 2, 2
-moment_matrix = make_moment_matrix(N, M, d)
+moment_matrix = MomentMatrix(N, M, d)
 print(moment_matrix)
