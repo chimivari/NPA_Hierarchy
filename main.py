@@ -24,21 +24,31 @@ class identity:
 
 class group:
     def __init__(self, s):
-        if isinstance(s, identity) or isinstance(s, symbol):
+        if isinstance(s, identity):
+            self.symbols = [s]
+            self.first_b_index = 1
+            return
+        elif isinstance(s, symbol):
+            self.first_b_index = int(s.same_who('A'))
             self.symbols = [s]
             return
         self.symbols = []
         last_who = ''
         start = 0
+        self.first_b_index = 0
         for i in range(len(s)):
             c = s[i]
             if c == 'A' or c == 'B':
                 if last_who != '':
                     self.symbols.append(symbol(last_who, int(s[start:i])))
+                    self.first_b_index += int(self.symbols[-1].same_who('A'))
+                if last_who == 'A' and c == 'B':
+                    self.first_b_index = len(self.symbols)
                 start = i + 1
                 last_who = c
         if last_who != '':
             self.symbols.append(symbol(last_who, int(s[start:len(s)])))
+            self.first_b_index += int(self.symbols[-1].same_who('A'))
     
     def __repr__(self):
         rst = ''
@@ -56,21 +66,20 @@ class group:
         return self.symbols.__iter__()
     
     def append(self, s: symbol):
+        if s.same_who('A'):
+            self.first_b_index += 1
+        elif s.same_who('B') and self.symbols[-1].same_who('A'):
+            self.first_b_index = len(self)
         self.symbols.append(s)
 
     def dagger(self):
-        if len(self) <= 1:
+        if len(self) <= 1 or (len(self) == 2 and self.first_b_index == 1):
             return self
-        A_symb = []
-        B_symb = []
-        for s in self:
-            if s.same_who('A'):
-                A_symb.append(s)
-            else:
-                B_symb.append(s)
-        A_symb.reverse()
-        B_symb.reverse()
-        self.symbols = A_symb + B_symb
+        As = self.symbols[:self.first_b_index]
+        Bs = self.symbols[self.first_b_index:]
+        As.reverse()
+        Bs.reverse()
+        self.symbols = As + Bs
         return self
 
 def generate_combinations(N, M, d):
@@ -120,6 +129,8 @@ def make_moment_matrix(N, M, d):
     col_labels = [group(identity())] 
     for i in range(1, d + 1):
         col_labels += generate_combinations(N, M, i)
+    for l in col_labels:
+        print(l, l.first_b_index)
     row_labels = copy.deepcopy(col_labels)
     row_labels = [l.dagger() for l in row_labels]
     return col_labels, row_labels
