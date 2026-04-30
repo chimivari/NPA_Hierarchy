@@ -4,7 +4,7 @@ This repos contains a simple code that build a moment matrix for a given degree,
 For exemple, this snippet print a the moment matrix $\Gamma$ of degree 2, for 2 Alice and Bob inputs, and all constraints of the type $\Gamma_{i,j}=\Gamma_{i',j'}$.
 
 ```python
-N, M, d = 2, 2, 2
+N, M, d = 2, 2, 2       # N Alice inputs, M Bob inputs, degree
 moment_matrix = MomentMatrix(N, M, d)
 print(moment_matrix)
 print(moment_matrix.get_constraints())
