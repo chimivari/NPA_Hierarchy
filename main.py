@@ -182,7 +182,11 @@ class MomentMatrix:
                     else:
                         constraints[s] = [(x, y)]
                 self.matrix[y * self.mat_width + x] = elt
-        self.constraints = constraints
+        # Clean all constraints which are not constraints (value of length 1)
+        self.constraints = {}
+        for c in constraints:
+            if len(constraints[c]) > 1:
+                self.constraints[c] = constraints[c]
 
     def __repr__(self):
         s = ''
