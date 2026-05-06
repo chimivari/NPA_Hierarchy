@@ -50,3 +50,41 @@ B1B0  None  None  None    None    None    None      None        None        None
 }
 ```
 A constraint should be read like : `'<A0A1B0>': [(10, 2), (9, 4)],` $\equiv \Gamma_{10,2}=\Gamma_{9,4}$
+
+### Semi definite programming
+Applying the following SDP :
+> find $\Gamma$ \
+> s.t.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $\Gamma_{i,i}=1$ \
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $\Gamma_{i,j}=\Gamma_{k,l}$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  for all (i, j), (k, l) sharing the same label &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\Gamma_{i,j}=p$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  if the label matches a known correlation value $p$
+
+We get the result :
+```
+============================================================
+Faisabilité du SDP pour les corrélations choisies
+============================================================
+statut : optimal
+       I       A0      A1      B0      B1   
+────────────────────────────────────────────
+I   +1.0000 +0.0000 +0.0000 +0.0000 +0.0000 
+A0  +0.0000 +1.0000 -0.0000 +0.7071 +0.7071 
+A1  +0.0000 -0.0000 +1.0000 +0.7071 -0.7071 
+B0  +0.0000 +0.7071 +0.7071 +1.0000 -0.0000 
+B1  +0.0000 +0.7071 -0.7071 -0.0000 +1.0000 
+
+============================================================
+Limite suppérieure de la CHSH value (devrait approcher 2√2 ≈ 2.8284)
+============================================================
+
+Moment matrix (d=1):
+       I       A0      A1      B0      B1   
+────────────────────────────────────────────
+I   +1.0000 +0.0000 +0.0000 +0.0000 +0.0000 
+A0  +0.0000 +1.0000 +0.0000 +0.7071 +0.7071 
+A1  +0.0000 +0.0000 +1.0000 +0.7071 -0.7071 
+B0  +0.0000 +0.7071 +0.7071 +1.0000 -0.0000 
+B1  +0.0000 +0.7071 -0.7071 -0.0000 +1.0000 
+
+NPA degree d=1: CHSH ≤ 2.828427  (Tsirelson = 2.828427,  statut=optimal)
+NPA degree d=2: CHSH ≤ 2.828431  (Tsirelson = 2.828427,  statut=optimal)
+```
