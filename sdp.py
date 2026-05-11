@@ -7,31 +7,30 @@ def build_sdp(moment_matrix: MomentMatrix, correlations: dict):
     Construit et résout le SDP pour la moment matrix
 
     Le SDP est:
-        trouver   Γ  (moment matrix, real symmetric PSD)
-        s.t.   Γ[i,i] = 1                        (diagonal from identity products)
-               Γ[i,j] = Γ[k,l]  for all (i,j),(k,l) sharing the same moment label
-               Γ[i,j] = p       if the label matches a known correlation value p
+        trouver   Γ  (moment matrix)
+        s.t.   Γ[i,i] = 1                        (diagonale = 1)
+               Γ[i,j] = Γ[k,l]  pour tout (i,j),(k,l) partageant le même label
+               Γ[i,j] = p       si on connait la corrélation p
     
     Parameters
     ----------
     moment_matrix : MomentMatrix
-        The symbolic moment matrix produced by your existing code.
     correlations : dict
-        Known numerical values for moment labels, e.g.:
+        Valeurs connues pour les labels, e.g.:
             {
-              '<A0>': 0.0,          # <A_x> marginals
-              '<B0>': 0.0,          # <B_y> marginals
-              '<A0B0>': 0.7071,     # joint correlations
+              '<A0>': 0.0,          # <A_x> proba marginales
+              '<B0>': 0.0,          # <B_y> proba marginales
+              '<A0B0>': 0.7071,     # corrélations jointes
               ...
             }
-        Labels must match the __repr__ of MomentMatrixElement exactly.
+        Les labels doivent correspondre parfaitement au résultat de la méthode __repr__ de la classe MomentMatrixElement.
  
     Returns
     -------
-    Gamma_val : np.ndarray or None
-        The filled moment matrix if the SDP is feasible, None otherwise.
+    Gamma_val : matrice numpy ou None
+        La moment matrice remplie en cas de faisabilité, None sinon
     problem : cp.Problem
-        The cvxpy problem object (inspect .status, .value, etc.)
+        L'objet de type Problem du package CVXPY
 
     """
     # Largeur de la moment_matrix
