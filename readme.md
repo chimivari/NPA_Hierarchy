@@ -53,14 +53,11 @@ A constraint should be read like : `'<A0A1B0>': [(10, 2), (9, 4)],` $\equiv \Gam
 
 ### Semi definite programming
 Applying the following SDP :
-$$
-\begin{aligned}
-&\text{find } \Gamma \\
-&\text{s.t. } \Gamma_{i,i}=1 \\
-&\phantom{\text{s.t. }} \Gamma_{i,j}=\Gamma_{k,l} \quad \text{for all (i, j), (k, l) sharing the same label} \\
-&\phantom{\text{s.t. }} \Gamma_{i,j}=p \quad \text{if the label matches a known correlation value } p
-\end{aligned}
-$$
+> find $\Gamma$ \
+> s.t. \
+> $\quad\quad\Gamma_{i,i}=1$ \
+> $\quad\quad\Gamma_{i,j}=\Gamma_{k,l}\quad$ for all (i,j), (k,l) sharing the same label \
+> $\quad\quad\Gamma_{i,j}=p\quad\quad$ if the label matches a known correlation value $p$
 
 We get the result :
 ```
